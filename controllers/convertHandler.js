@@ -1,15 +1,32 @@
 function ConvertHandler(param) {
-  const indx = param.split("").findIndex((i) => /[a-z]/i.test(i));
+  const index = (i) => i.split("").findIndex((f) => /[a-z]/i.test(f));
+  const units = ["gal", "l", "mi", "km", "lbs", "kg"];
 
   this.getNum = function (input) {
-    let result = Number(input.slice(0, indx));
+    console.log("input ", input);
+    if (input == undefined || /[a-z]/i.test(input[0])) return 1;
+
+    const num = input.slice(0, index(input));
+    let result = new Error("invalid number");
+
+    if (!/\//.test(num) || num.match(/\//g).length == 1) {
+      try {
+        result = Function("return " + num)();
+      } catch {}
+    }
+
     return result;
   };
 
   this.getUnit = function (input) {
-    let result = input.slice(indx).toLowerCase();
+    if (input == undefined) return "gal";
+    if (index(input) == -1) return new Error("invalid unit");
 
-    return result;
+    const unit = input.slice(index(input));
+    if (units.indexOf(unit.toLowerCase()) == -1)
+      return new Error("invalid unit");
+
+    return unit.length == 1 ? 'L' : unit.toLowerCase()
   };
 
   this.getReturnUnit = function (initUnit) {
@@ -23,20 +40,20 @@ function ConvertHandler(param) {
         result = "gal";
         break;
 
-      case "mi":
-        result = "km";
-        break;
-
-      case "km":
-        result = "mi";
+      case "lbs":
+        result = "kg";
         break;
 
       case "kg":
         result = "lbs";
         break;
 
-      case "lbs":
-        result = "kg";
+      case "mi":
+        result = "km";
+        break;
+
+      case "km":
+        result = "mi";
         break;
 
       default:
@@ -49,6 +66,35 @@ function ConvertHandler(param) {
 
   this.spellOutUnit = function (unit) {
     let result;
+    switch (initUnit) {
+      case "gal":
+        result = "gal converts to L";
+        break;
+
+      case "L":
+        result = "L converts to gal";
+        break;
+
+      case "mi":
+        result = "mi converts to km";
+        break;
+
+      case "km":
+        result = "km converts to mi";
+        break;
+
+      case "kg":
+        result = "kg converts to lbs";
+        break;
+
+      case "lbs":
+        result = "lbs converts to kg";
+        break;
+
+      default:
+        result = "invalid unit";
+        break;
+    }
 
     return result;
   };
@@ -93,24 +139,7 @@ function ConvertHandler(param) {
   };
 
   this.getString = function (initNum, initUnit, returnNum, returnUnit) {
-    let result;
-
-    /*
-    if (initUnit == "invalid unit" && initNum == "invalid number") {
-      result = "invalid number and unit";
-    } else if (initUnit == "invalid unit") {
-      result = "invalid unit";
-    } else if (initNum == "invalid number") {
-      result = "invalid number";
-    } else {
-      result = `${initNum} ${initUnitString} converts to ${returnNum} ${returnUnitString}`;
-    }
-    */
-
-    result = {
-      initNum, initUnit, returnNum, returnUnit,
-      string:  `${initNum} ${initUnitString} converts to ${returnNum} ${returnUnitString}`
-    };
+    let result = `${initNum} ${initUnit} converts to ${returnNum} ${returnUnit}`;
 
     return result;
   };
