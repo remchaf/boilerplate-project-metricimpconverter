@@ -1,4 +1,4 @@
-function ConvertHandler(param) {
+function ConvertHandler() {
   const index = (i) => i.split("").findIndex((f) => /[a-z]/i.test(f));
   const units = ["gal", "l", "mi", "km", "lbs", "kg"];
 
@@ -18,14 +18,16 @@ function ConvertHandler(param) {
   };
 
   this.getUnit = function (input) {
-    if (input == undefined) return "gal";
+    if (input == "") {
+      return "gal";
+    }
     if (index(input) == -1) return new Error("invalid unit");
 
     const unit = input.slice(index(input));
     if (units.indexOf(unit.toLowerCase()) == -1)
       return new Error("invalid unit");
 
-    return unit.length == 1 ? 'L' : unit.toLowerCase()
+    return unit.length == 1 ? "L" : unit.toLowerCase();
   };
 
   this.getReturnUnit = function (initUnit) {
