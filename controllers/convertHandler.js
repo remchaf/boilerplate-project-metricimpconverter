@@ -3,7 +3,6 @@ function ConvertHandler(param) {
   const units = ["gal", "l", "mi", "km", "lbs", "kg"];
 
   this.getNum = function (input) {
-    console.log("input ", input);
     if (input == undefined || /[a-z]/i.test(input[0])) return 1;
 
     const num = input.slice(0, index(input));
@@ -66,7 +65,7 @@ function ConvertHandler(param) {
 
   this.spellOutUnit = function (unit) {
     let result;
-    switch (initUnit) {
+    switch (unit) {
       case "gal":
         result = "gal converts to L";
         break;

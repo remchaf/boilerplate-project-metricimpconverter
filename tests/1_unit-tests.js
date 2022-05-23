@@ -72,7 +72,7 @@ suite("Unit Tests", function () {
   });
 
   test("9 - Return the spelled-out string unit for each value unit", function () {
-    const units = [
+    const spelled = [
       "gal converts to L",
       "L converts to gal",
       "mi converts to km",
@@ -80,6 +80,22 @@ suite("Unit Tests", function () {
       "lbs converts to kg",
       "kg converts to lbs",
     ];
-    assert.include(convertHandler.spellOutUnit("gal"), units);
+    const units = ["gal", "L", "mi", "km", "lbs", "kg"];
+    units.forEach(function (u) {
+      assert.include(
+        spelled,
+        convertHandler.spellOutUnit(u),
+        "Should correctly return the spelled-out string unit for valid inputs"
+      );
+    });
   });
+
+  test("10 - Correct converses", function(){
+    assert.equal(convertHandler.getReturnUnit("gal"), "L", "should correctly convert gal to L")
+    assert.equal(convertHandler.getReturnUnit("L"), "gal", "should correctly convert L to gal")
+    assert.equal(convertHandler.getReturnUnit("mi"), "km", "should correctly convert mi to km")
+    assert.equal(convertHandler.getReturnUnit("km"), "mi", "should correctly convert km to mi")
+    assert.equal(convertHandler.getReturnUnit("lbs"), "kg", "should correctly convert lbs to kg")
+    assert.equal(convertHandler.getReturnUnit("kg"), "lbs", "should correctly convert kg to lbs")
+  })
 });
