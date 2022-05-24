@@ -3,14 +3,20 @@ function ConvertHandler() {
   const units = ["gal", "l", "mi", "km", "lbs", "kg"];
 
   this.getNum = function (input) {
-    if (input == undefined || /[a-z]/i.test(input[0])) return 1;
+    if (input == "" || /[a-z]/i.test(input[0])) return 1;
 
     const num = input.slice(0, index(input));
-    let result = new Error("invalid number");
+    let result = "invalid number";
 
     if (!/\//.test(num) || num.match(/\//g).length == 1) {
+      // or if(num.split("/").length <= 2)
       try {
-        result = Function("return " + num)();
+        result =
+          Function("return " + num)() -
+            Math.floor(Function("return " + num)()) ==
+          0
+            ? Function("return " + num)()
+            : Number(Function("return " + num)().toFixed(5));
       } catch {}
     }
 
@@ -21,11 +27,10 @@ function ConvertHandler() {
     if (input == "") {
       return "gal";
     }
-    if (index(input) == -1) return new Error("invalid unit");
+    if (index(input) == -1) return "invalid unit";
 
-    const unit = input.slice(index(input));
-    if (units.indexOf(unit.toLowerCase()) == -1)
-      return new Error("invalid unit");
+    const unit = input.slice(index(input)).toLowerCase();
+    if (units.indexOf(unit) == -1) return "invalid unit"; // or if( !units.include(unit) ) return "invalid number"
 
     return unit.length == 1 ? "L" : unit.toLowerCase();
   };
@@ -69,31 +74,31 @@ function ConvertHandler() {
     let result;
     switch (unit) {
       case "gal":
-        result = "gal converts to L";
+        result = "gallons";
         break;
 
       case "L":
-        result = "L converts to gal";
+        result = "liters";
         break;
 
       case "mi":
-        result = "mi converts to km";
+        result = "miles";
         break;
 
       case "km":
-        result = "km converts to mi";
+        result = "kilometers";
         break;
 
       case "kg":
-        result = "kg converts to lbs";
+        result = "kilograms";
         break;
 
       case "lbs":
-        result = "lbs converts to kg";
+        result = "pounds";
         break;
 
       default:
-        result = "invalid unit";
+        result = "unknown unit";
         break;
     }
 
@@ -136,11 +141,11 @@ function ConvertHandler() {
         break;
     }
 
-    return result;
+    return parseFloat(result.toFixed(5));
   };
 
   this.getString = function (initNum, initUnit, returnNum, returnUnit) {
-    let result = `${initNum} ${initUnit} converts to ${returnNum} ${returnUnit}`;
+    let result = `${initNum} ${this.spellOutUnit(initUnit)} converts to ${returnNum} ${this.spellOutUnit(returnUnit)}`;
 
     return result;
   };

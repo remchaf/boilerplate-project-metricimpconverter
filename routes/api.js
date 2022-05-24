@@ -6,33 +6,36 @@ const ConvertHandler = require("../controllers/convertHandler.js");
 module.exports = function (app) {
   app.route("/api/convert").get((req, res) => {
     const param = req.query.input;
+    console.log(param);
     let convertHandler = new ConvertHandler();
     let response;
+    const initNum = convertHandler.getNum(param);
+    const initUnit = convertHandler.getUnit(param);
 
-    if (
-      convertHandler.getNum(param) == "invalid number" &&
-      convertHandler.getUnit(param) == "invalid unit"
-    ) {
+    if (initNum == "invalid number" && initUnit == "invalid unit") {
       response = "invalid number and unit";
-    } else if (typeof convertHandler.getNum(param) == "string") {
+      res.send(response);
+    } else if (initNum == "invalid number") {
       response = "invalid number";
-    } else if (convertHandler.getUnit(param) == "invalid unit") {
+      res.send(response);
+    } else if (initUnit == "invalid unit") {
       response = "invalid unit";
+      res.send(response);
     } else {
       response = {
-        initNum: convertHandler.getNum(param),
-        initUnit: convertHandler.getUnit(param),
-        returnNum: convertHandler.convert(convertHandler.getNum(param)),
-        returnUnit: convertHandler.getReturnUnit(convertHandler.getUnit(param)),
+        initNum: initNum,
+        initUnit: initUnit,
+        returnNum: convertHandler.convert(initNum, initUnit),
+        returnUnit: convertHandler.getReturnUnit(initUnit),
         string: convertHandler.getString(
-          convertHandler.getNum(param),
-          convertHandler.getUnit(param),
-          convertHandler.convert(convertHandler.getNum(param)),
-          convertHandler.getReturnUnit(convertHandler.getUnit(param))
+          initNum,
+          initUnit,
+          convertHandler.convert(initNum, initUnit),
+          convertHandler.getReturnUnit(initUnit)
         ),
       };
+      res.json(response);
     }
 
-    res.json(response);
   });
 };
